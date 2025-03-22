@@ -44,7 +44,7 @@ export const PreviewDialog: React.FC<PreviewDialogProps> = ({ csvContent, fileNa
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl w-[90vw] h-[90vh] flex flex-col">
         <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-xl font-semibold">CSV Preview: {fileName}</h2>
+          <h2 className="text-xl font-semibold" data-testid="preview-dialog-title">CSV Preview: {fileName}</h2>
           <button
             data-testid={"close-button"}
             onClick={onClose}

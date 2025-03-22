@@ -46,6 +46,7 @@ export const FilePreview: React.FC<FilePreviewProps> = ({ file, index, onOpenPre
         {csvPreview && (
           <div className="mt-2 text-xs text-gray-600 font-mono bg-gray-50 p-2 rounded overflow-x-auto whitespace-pre relative group">
             <button
+              data-testid="open-input-preview"
               onClick={() => onOpenPreview(file)}
               className="absolute top-2 right-2 p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
               title="Open Full Preview"

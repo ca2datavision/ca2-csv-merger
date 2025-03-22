@@ -132,10 +132,10 @@ function App() {
                 Drag files to reorder
               </p>
             </div>
-            <FileList 
-              files={files} 
-              onReorder={handleReorder} 
-              onDelete={handleDelete} 
+            <FileList
+              files={files}
+              onReorder={handleReorder}
+              onDelete={handleDelete}
               onOpenPreview={handleOpenPreview}
             />
             <div className="mt-4 text-center">
@@ -160,6 +160,7 @@ function App() {
                   {mergedPreview && (
                     <div className="bg-white rounded-lg shadow-sm p-4 relative">
                       <button
+                        data-testid="open-output-preview"
                         onClick={() => setIsPreviewOpen(true)}
                         className="absolute top-2 right-2 p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                         title="Open Full Preview"
@@ -208,7 +209,7 @@ function App() {
         </footer>
       </div>
       {isPreviewOpen && mergedData && (
-        <PreviewDialog 
+        <PreviewDialog
           csvContent={selectedPreviewFile ? selectedPreviewFile : mergedData}
           fileName={selectedPreviewFile?.name || 'Merged Result'}
           onClose={() => {
