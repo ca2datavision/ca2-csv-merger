@@ -1,5 +1,7 @@
 # CSV Merger
 
+[![Build and Push Docker Image](https://github.com/ca2datavision/ca2-csv-merger/actions/workflows/docker.yml/badge.svg)](https://github.com/ca2datavision/ca2-csv-merger/actions/workflows/docker.yml)
+
 A powerful, browser-based tool for merging multiple CSV files. Process your data privately and securely - all operations happen in your browser, ensuring your files never leave your computer.
 
 ![CSV Merger Screenshot](https://github.com/ca2datavision/ca2-csv-merger/raw/main/screenshot.png)
