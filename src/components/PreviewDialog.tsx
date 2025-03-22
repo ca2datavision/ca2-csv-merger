@@ -46,13 +46,14 @@ export const PreviewDialog: React.FC<PreviewDialogProps> = ({ csvContent, fileNa
         <div className="flex items-center justify-between p-4 border-b">
           <h2 className="text-xl font-semibold">CSV Preview: {fileName}</h2>
           <button
+            data-testid={"close-button"}
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
-        
+
         <div className="flex-1 overflow-auto">
           <table className="w-full border-collapse">
             <thead className="sticky top-0 bg-gray-50">
@@ -88,6 +89,7 @@ export const PreviewDialog: React.FC<PreviewDialogProps> = ({ csvContent, fileNa
           </div>
           <div className="flex gap-2">
             <button
+              data-testid={"Previous"}
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
               disabled={currentPage === 1}
               className="px-3 py-1 rounded border hover:bg-gray-100 disabled:opacity-50"
@@ -98,6 +100,7 @@ export const PreviewDialog: React.FC<PreviewDialogProps> = ({ csvContent, fileNa
               Page {currentPage} of {totalPages}
             </span>
             <button
+              data-testid={"Next"}
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
               className="px-3 py-1 rounded border hover:bg-gray-100 disabled:opacity-50"
