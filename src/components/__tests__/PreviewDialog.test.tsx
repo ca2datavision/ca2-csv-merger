@@ -1,6 +1,16 @@
 import { render, screen, fireEvent } from '@testing-library/react';
+import { I18nextProvider } from 'react-i18next';
+import i18n from '../../i18n';
 import { PreviewDialog } from '../PreviewDialog';
 import { vi } from 'vitest';
+
+const renderWithI18n = (component: React.ReactNode) => {
+  return render(
+    <I18nextProvider i18n={i18n}>
+      {component}
+    </I18nextProvider>
+  );
+};
 
 const generateLargeCSV = () => {
   const headers = '"Complex, Header 1","Header, 2"';
@@ -21,7 +31,7 @@ describe('PreviewDialog', () => {
   });
 
   it('renders dialog with correct title and content', () => {
-    render(<PreviewDialog {...mockProps} />);
+    renderWithI18n(<PreviewDialog {...mockProps} />);
 
     const title = screen.getByTestId('preview-dialog-title');
     expect(title).toHaveTextContent('CSV Preview: test.csv');
@@ -31,13 +41,13 @@ describe('PreviewDialog', () => {
 
   it('handles semicolon-delimited content', () => {
     const semicolonContent = 'header1;header2\nvalue1;value2';
-    render(<PreviewDialog {...mockProps} csvContent={semicolonContent} />);
+    renderWithI18n(<PreviewDialog {...mockProps} csvContent={semicolonContent} />);
     expect(screen.getByText('header1')).toBeInTheDocument();
     expect(screen.getByText('value1')).toBeInTheDocument();
   });
 
   it('handles pagination correctly', () => {
-    const { getByTestId } = render(<PreviewDialog {...mockProps} />);
+    const { getByTestId } = renderWithI18n(<PreviewDialog {...mockProps} />);
 
     const nextButton = getByTestId('Next');
     const prevButton = getByTestId('Previous');
@@ -46,10 +56,11 @@ describe('PreviewDialog', () => {
     expect(nextButton).toBeDisabled(); // Only 2 rows of data
 
     expect(screen.getByText('Showing rows 1-2 of 2')).toBeInTheDocument();
+    expect(screen.getByText(/Showing rows 1-2 of 2|Afișare rânduri 1-2 din 2/)).toBeInTheDocument();
   });
 
   it('calls onClose when close button is clicked', () => {
-    const { getByTestId } = render(<PreviewDialog {...mockProps} />);
+    const { getByTestId } = renderWithI18n(<PreviewDialog {...mockProps} />);
 
     const closeButton = getByTestId('close-button');
 
@@ -59,7 +70,7 @@ describe('PreviewDialog', () => {
   });
   it('handles pagination with large datasets', async () => {
     const largeCsvContent = generateLargeCSV();
-    const { getByTestId } = render(
+    const { getByTestId } = renderWithI18n(
       <PreviewDialog
         csvContent={largeCsvContent}
         fileName="large.csv"
@@ -86,7 +97,7 @@ describe('PreviewDialog', () => {
 
   it('shows correct page information when navigating', async () => {
     const largeCsvContent = generateLargeCSV();
-    render(
+    renderWithI18n(
       <PreviewDialog
         csvContent={largeCsvContent}
         fileName="large.csv"
@@ -95,17 +106,17 @@ describe('PreviewDialog', () => {
     );
 
     // Check initial page
-    expect(screen.getByText('Page 1 of 2')).toBeInTheDocument();
-    expect(screen.getByText('Showing rows 1-50 of 100')).toBeInTheDocument();
+    expect(screen.getByText(/Page 1 of 2|Pagina 1 din 2/)).toBeInTheDocument();
+    expect(screen.getByText(/Showing rows 1-50 of 100|Afișare rânduri 1-50 din 100/)).toBeInTheDocument();
 
     // Go to next page
     fireEvent.click(screen.getByTestId('Next'));
-    expect(screen.getByText('Page 2 of 2')).toBeInTheDocument();
-    expect(screen.getByText('Showing rows 51-100 of 100')).toBeInTheDocument();
+    expect(screen.getByText(/Page 2 of 2|Pagina 2 din 2/)).toBeInTheDocument();
+    expect(screen.getByText(/Showing rows 51-100 of 100|Afișare rânduri 51-100 din 100/)).toBeInTheDocument();
 
     // Go back to first page
     fireEvent.click(screen.getByTestId('Previous'));
-    expect(screen.getByText('Page 1 of 2')).toBeInTheDocument();
-    expect(screen.getByText('Showing rows 1-50 of 100')).toBeInTheDocument();
+    expect(screen.getByText(/Page 1 of 2|Pagina 1 din 2/)).toBeInTheDocument();
+    expect(screen.getByText(/Showing rows 1-50 of 100|Afișare rânduri 1-50 din 100/)).toBeInTheDocument();
   });
 });

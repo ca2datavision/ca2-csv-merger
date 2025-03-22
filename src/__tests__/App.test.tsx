@@ -1,7 +1,8 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { vi } from 'vitest';
+import { I18nextProvider } from 'react-i18next';
+import i18n from '../i18n';
 import App from '../App';
-import userEvent from '@testing-library/user-event';
 
 // Mock the CSV processing utilities
 vi.mock('../utils/csvProcessor', () => ({
@@ -12,42 +13,76 @@ vi.mock('../utils/csvProcessor', () => ({
   parseCSVLine: vi.fn().mockImplementation(line => line.split(',')),
 }));
 
+const renderWithI18n = (component: React.ReactNode) => {
+  return render(
+    <I18nextProvider i18n={i18n}>
+      {component}
+    </I18nextProvider>
+  );
+};
+
 describe('App', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it('renders initial state correctly', () => {
-    render(<App />);
-    expect(screen.getByText('CSV Merge')).toBeInTheDocument();
+    renderWithI18n(<App />);
+    expect(screen.getByText(/^(CSV Merge|Unificare CSV)$/)).toBeInTheDocument();
     expect(screen.getByText(/100% Private/)).toBeInTheDocument();
   });
 
+  it('renders language selector in the correct position', () => {
+    renderWithI18n(<App />);
+    const languageSelector = screen.getByRole('combobox');
+    expect(languageSelector).toBeInTheDocument();
+    expect(languageSelector.parentElement?.parentElement).toHaveClass('absolute top-4 right-4');
+  });
+
+  it('changes language when selector is used', async () => {
+    renderWithI18n(<App />);
+    const languageSelector = screen.getByRole('combobox');
+
+    // Change to Romanian
+    fireEvent.change(languageSelector, { target: { value: 'ro' } });
+    await waitFor(() => {
+      expect(screen.getByText('Unificare CSV')).toBeInTheDocument();
+      expect(screen.getByText(/100% Privat/)).toBeInTheDocument();
+    });
+
+    // Change back to English
+    fireEvent.change(languageSelector, { target: { value: 'en' } });
+    await waitFor(() => {
+      expect(screen.getByText('CSV Merge')).toBeInTheDocument();
+      expect(screen.getByText(/100% Private/)).toBeInTheDocument();
+    });
+  });
+
   it('handles start over functionality', async () => {
-    render(<App />);
-    
+    renderWithI18n(<App />);
+
     const file = new File(['name,age\nJohn,30'], 'test.csv', { type: 'text/csv' });
     const input = screen.getByLabelText('Select Files');
-    
+
     Object.defineProperty(input, 'files', {
       value: [file],
     });
-    
+
     fireEvent.change(input);
-    
+
     await waitFor(() => {
       expect(screen.getByText('test.csv')).toBeInTheDocument();
     });
-    
+
     const startOverButton = screen.getByText('Start Over');
     fireEvent.click(startOverButton);
-    
+
     expect(screen.queryByText('test.csv')).not.toBeInTheDocument();
     expect(screen.queryByText('Preview of Merged Result')).not.toBeInTheDocument();
   });
 
   it('handles file selection', async () => {
-    render(<App />);
+    renderWithI18n(<App />);
 
     const file = new File(['name,age\nJohn,30'], 'test.csv', { type: 'text/csv' });
     const input = screen.getByLabelText('Select Files');
@@ -64,7 +99,7 @@ describe('App', () => {
   });
 
   it('handles file deletion', async () => {
-    render(<App />);
+    renderWithI18n(<App />);
 
     const file = new File(['name,age\nJohn,30'], 'test.csv', { type: 'text/csv' });
     const input = screen.getByLabelText('Select Files');
@@ -81,9 +116,12 @@ describe('App', () => {
       expect(screen.queryByText('test.csv')).not.toBeInTheDocument();
     });
   });
- 
+
   it('shows preview dialog when preview button is clicked', async () => {
-    const { getByTestId } = render(<App />);
+    let getByTestId: any;
+    act(() => {
+      getByTestId = renderWithI18n(<App/>).getByTestId
+    })
 
     const file = new File(['name,age\nJohn,30'], 'test.csv', { type: 'text/csv' });
     const input = screen.getByLabelText('Select Files');
@@ -92,21 +130,26 @@ describe('App', () => {
       value: [file],
     });
 
-    fireEvent.change(input);
-
+    act(() => {
+      fireEvent.change(input)
+    })
     await waitFor(async () => {
       const previewButton = screen.getByTestId('open-output-preview');
-      fireEvent.click(previewButton);
+      if (previewButton) {
+      }
+      act(() => {
+        fireEvent.click(previewButton);
+      });
       await waitFor(async () => {
         const previewTitle = getByTestId('preview-dialog-title');
         expect(previewTitle).toBeInTheDocument();
-        expect(previewTitle).toHaveTextContent('CSV Preview: Merged Result');
+        expect(previewTitle).toHaveTextContent('CSV Preview: Preview of Merged Result');
       });
     });
   });
 
   it('handles drag and drop', async () => {
-    render(<App />);
+    renderWithI18n(<App />);
 
     const file = new File(['name,age\nJohn,30'], 'test.csv', { type: 'text/csv' });
     const dropZone = screen.getByText(/Drag & drop your CSV files here/);
@@ -130,7 +173,7 @@ describe('App', () => {
     global.URL.createObjectURL = mockCreateObjectURL;
     global.URL.revokeObjectURL = mockRevokeObjectURL;
 
-    render(<App />);
+    renderWithI18n(<App />);
 
     const file = new File(['name,age\nJohn,30'], 'test.csv', { type: 'text/csv' });
     const input = screen.getByLabelText('Select Files');
@@ -151,7 +194,7 @@ describe('App', () => {
 
   it('handles social sharing buttons', () => {
     const mockOpen = vi.spyOn(window, 'open').mockImplementation(() => null);
-    render(<App />);
+    renderWithI18n(<App />);
 
     fireEvent.click(screen.getByTestId('share-twitter'));
     expect(mockOpen).toHaveBeenCalledWith(
@@ -185,11 +228,13 @@ describe('App', () => {
       clipboard: mockClipboard
     });
 
-    render(<App />);
-    
+    act(() => {
+      renderWithI18n(<App/>)
+    })
     const copyButton = screen.getByTestId('copy-link');
-    fireEvent.click(copyButton);
-
+    act(() => {
+      fireEvent.click(copyButton)
+    })
     expect(mockClipboard.writeText).toHaveBeenCalledWith(
       'https://tools.ca2datavision.ro/csv-merger/'
     );
