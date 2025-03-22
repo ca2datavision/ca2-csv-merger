@@ -1,7 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { FilePreview } from '../FilePreview'
 import { vi } from 'vitest'
-import { mockFs } from 'mock-fs'
 
 describe('FilePreview', () => {
   const mockFile = new File(['test,data\n1,2'], 'test.csv', { type: 'text/csv' })

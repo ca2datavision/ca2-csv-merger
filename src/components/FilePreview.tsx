@@ -20,7 +20,10 @@ export const FilePreview: React.FC<FilePreviewProps> = ({ file, index, onOpenPre
       setPreview(url);
       return () => URL.revokeObjectURL(url);
     } else if (file.type === 'text/csv' || file.name.endsWith('.csv')) {
-      previewCSV(file).then(setCsvPreview).catch(() => setError('Failed to preview CSV'));
+      previewCSV(file).then(setCsvPreview).catch((e) => {
+        console.log('previewCSV error', e);
+        setError('Failed to preview CSV');
+      });
     }
   }, [file]);
 
