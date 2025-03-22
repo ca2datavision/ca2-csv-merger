@@ -121,4 +121,50 @@ describe('App', () => {
       expect(mockRevokeObjectURL).toHaveBeenCalled();
     });
   });
+
+  it('handles social sharing buttons', () => {
+    const mockOpen = vi.spyOn(window, 'open').mockImplementation(() => null);
+    render(<App />);
+
+    fireEvent.click(screen.getByTestId('share-twitter'));
+    expect(mockOpen).toHaveBeenCalledWith(
+      expect.stringContaining('twitter.com/intent/tweet'),
+      '_blank',
+      'width=600,height=400'
+    );
+
+    fireEvent.click(screen.getByTestId('share-linkedin'));
+    expect(mockOpen).toHaveBeenCalledWith(
+      expect.stringContaining('linkedin.com/sharing'),
+      '_blank',
+      'width=600,height=400'
+    );
+
+    fireEvent.click(screen.getByTestId('share-facebook'));
+    expect(mockOpen).toHaveBeenCalledWith(
+      expect.stringContaining('facebook.com/sharer'),
+      '_blank',
+      'width=600,height=400'
+    );
+
+    mockOpen.mockRestore();
+  });
+
+  it('handles copy link button', async () => {
+    const mockClipboard = {
+      writeText: vi.fn().mockResolvedValue(undefined)
+    };
+    Object.assign(navigator, {
+      clipboard: mockClipboard
+    });
+
+    render(<App />);
+    
+    const copyButton = screen.getByTestId('copy-link');
+    fireEvent.click(copyButton);
+
+    expect(mockClipboard.writeText).toHaveBeenCalledWith(
+      'https://tools.ca2datavision.ro/csv-merger/'
+    );
+  });
 });
