@@ -59,7 +59,7 @@ describe('csvProcessor', () => {
     it('ignores empty columns', async () => {
       const file = new File(['name,age,empty\nJohn,30,\nJane,25,'], 'test.csv', { type: 'text/csv' });
       const result = await processCSVFiles([file]);
-      const lines = result.split('\n');
+      const lines = result.split('\r\n');
       expect(lines[0].split(',').sort()).toEqual(['name', 'age'].sort());
       expect(lines[1]).not.toContain('empty');
     });
@@ -67,7 +67,7 @@ describe('csvProcessor', () => {
     it('ignores columns that are all empty', async () => {
       const file = new File(['name,empty1,age,empty2\nJohn,,30,\nJane,,25,'], 'test.csv', { type: 'text/csv' });
       const result = await processCSVFiles([file]);
-      const lines = result.split('\n');
+      const lines = result.split('\r\n');
       expect(lines[0].split(',').sort()).toEqual(['name', 'age'].sort());
       expect(lines[1]).not.toContain('empty1');
       expect(lines[1]).not.toContain('empty2');
