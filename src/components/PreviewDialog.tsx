@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import Papa from 'papaparse';
 
 interface PreviewDialogProps {
@@ -9,6 +10,7 @@ interface PreviewDialogProps {
 }
 
 export const PreviewDialog: React.FC<PreviewDialogProps> = ({ csvContent, fileName, onClose }) => {
+  const { t } = useTranslation();
   const [currentPage, setCurrentPage] = useState(1);
   const [content, setContent] = useState<string>('');
   const rowsPerPage = 50;
@@ -45,7 +47,9 @@ export const PreviewDialog: React.FC<PreviewDialogProps> = ({ csvContent, fileNa
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl w-[90vw] h-[90vh] flex flex-col">
         <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-xl font-semibold" data-testid="preview-dialog-title">CSV Preview: {fileName}</h2>
+          <h2 className="text-xl font-semibold" data-testid="preview-dialog-title">
+            {t('preview.dialogTitle', { fileName })}
+          </h2>
           <button
             data-testid={"close-button"}
             onClick={onClose}
@@ -86,7 +90,11 @@ export const PreviewDialog: React.FC<PreviewDialogProps> = ({ csvContent, fileNa
 
         <div className="border-t p-4 flex items-center justify-between bg-gray-50">
           <div className="text-sm text-gray-600">
-            Showing rows {startIndex + 1}-{Math.min(endIndex, data.length)} of {data.length}
+            {t('pagination.showing', {
+              start: startIndex + 1,
+              end: Math.min(endIndex, data.length),
+              total: data.length
+            })}
           </div>
           <div className="flex gap-2">
             <button
@@ -95,10 +103,10 @@ export const PreviewDialog: React.FC<PreviewDialogProps> = ({ csvContent, fileNa
               disabled={currentPage === 1}
               className="px-3 py-1 rounded border hover:bg-gray-100 disabled:opacity-50"
             >
-              Previous
+              {t('pagination.previous')}
             </button>
             <span className="px-3 py-1">
-              Page {currentPage} of {totalPages}
+              {t('pagination.page', { current: currentPage, total: totalPages })}
             </span>
             <button
               data-testid={"Next"}
@@ -106,7 +114,7 @@ export const PreviewDialog: React.FC<PreviewDialogProps> = ({ csvContent, fileNa
               disabled={currentPage === totalPages}
               className="px-3 py-1 rounded border hover:bg-gray-100 disabled:opacity-50"
             >
-              Next
+              {t('pagination.next')}
             </button>
           </div>
         </div>
