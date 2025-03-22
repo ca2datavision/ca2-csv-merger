@@ -2,9 +2,9 @@ export const ro = {
   title: 'Unificare CSV',
   privacy: {
     title: '100% Privat',
-    description: 'Toată procesarea fișierelor CSV se face în browser - fișierele tale nu părăsesc niciodată calculatorul'
+    description: 'Toată procesarea fișierelor CSV se face direct în browser - datele nu sunt niciodată încărcate sau stocate'
   },
-  description: 'Un instrument puternic pentru unificarea mai multor fișiere CSV într-un singur fișier consolidat. Pur și simplu trage și plasează fișierele CSV, aranjează-le în ordinea dorită și dă click pe unificare. Instrumentul gestionează automat diferite structuri de coloane și păstrează toate datele tale.',
+  description: 'Un instrument puternic pentru unificarea mai multor fișiere CSV într-un singur fișier consolidat. Pur și simplu trage și plasează fișierele CSV, aranjează-le în ordinea dorită și dă click pe unificare. Instrumentul gestionează automat diferite structuri de coloane.',
   dropzone: {
     text: 'Trage și plasează fișierele CSV aici, sau',
     button: 'Selectează Fișiere'

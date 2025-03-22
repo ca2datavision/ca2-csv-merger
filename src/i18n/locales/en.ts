@@ -2,9 +2,9 @@ export const en = {
   title: 'CSV Merge',
   privacy: {
     title: '100% Private',
-    description: 'All CSV processing happens in your browser - your files never leave your computer'
+    description: 'All CSV processing happens directly in your browser - no data is ever uploaded or stored'
   },
-  description: 'A powerful tool for merging multiple CSV files into a single, consolidated file. Simply drag and drop your CSV files, arrange them in the desired order, and click merge. The tool automatically handles different column structures and preserves all your data.',
+  description: 'A powerful tool for merging multiple CSV files into a single, consolidated file. Simply drag and drop your CSV files, arrange them in the desired order, and click merge. The tool automatically handles different column structures.',
   dropzone: {
     text: 'Drag & drop your CSV files here, or',
     button: 'Select Files'
