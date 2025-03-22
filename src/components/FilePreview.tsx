@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileIcon, ImageIcon, FileTextIcon, FileX, Maximize2 } from 'lucide-react';
+import { FileTextIcon, FileX, Maximize2 } from 'lucide-react';
 import { formatFileSize } from '../utils/fileUtils';
 import { previewCSV } from '../utils/csvProcessor';
 
@@ -10,16 +10,11 @@ interface FilePreviewProps {
 }
 
 export const FilePreview: React.FC<FilePreviewProps> = ({ file, index, onOpenPreview }) => {
-  const [preview, setPreview] = React.useState<string | null>(null);
   const [error, setError] = React.useState<string | null>(null);
   const [csvPreview, setCsvPreview] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    if (file.type.startsWith('image/')) {
-      const url = URL.createObjectURL(file);
-      setPreview(url);
-      return () => URL.revokeObjectURL(url);
-    } else if (file.type === 'text/csv' || file.name.endsWith('.csv')) {
+    if (file.type === 'text/csv' || file.name.endsWith('.csv')) {
       previewCSV(file).then(setCsvPreview).catch((e) => {
         console.log('previewCSV error', e);
         setError('Failed to preview CSV');
@@ -28,13 +23,7 @@ export const FilePreview: React.FC<FilePreviewProps> = ({ file, index, onOpenPre
   }, [file]);
 
   const getFileIcon = () => {
-    if (file.type.startsWith('image/')) {
-      return <ImageIcon className="w-6 h-6 text-blue-500" />;
-    } else if (file.type === 'text/csv' || file.name.endsWith('.csv')) {
-      return <FileTextIcon className="w-6 h-6 text-green-500" />;
-    } else if (file.type === 'application/pdf') {
-      return <FileIcon className="w-6 h-6 text-red-500" />;
-    } else if (file.type.includes('document')) {
+    if (file.type === 'text/csv' || file.name.endsWith('.csv')) {
       return <FileTextIcon className="w-6 h-6 text-green-500" />;
     }
     return <FileX className="w-6 h-6 text-gray-500" />;
@@ -67,16 +56,6 @@ export const FilePreview: React.FC<FilePreviewProps> = ({ file, index, onOpenPre
           </div>
         )}
       </div>
-      {preview && (
-        <div className="flex-shrink-0 w-16 h-16 rounded overflow-hidden">
-          <img
-            src={preview}
-            alt={file.name}
-            className="w-full h-full object-cover"
-            onError={() => setError('Preview failed to load')}
-          />
-        </div>
-      )}
     </div>
   );
 };
