@@ -193,7 +193,17 @@ function App() {
                       </div>
                     </div>
                   )}
-                  <div className="mt-4 flex justify-end">
+                  <div className="mt-4 flex justify-between items-center">
+                    <button
+                      onClick={() => {
+                        setFiles([]);
+                        setMergedData(null);
+                        setMergedPreview(null);
+                      }}
+                      className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors inline-flex items-center gap-2"
+                    >
+                      Start Over
+                    </button>
                     <button
                       onClick={handleDownload}
                       className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors inline-flex items-center gap-2"
