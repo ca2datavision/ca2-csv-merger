@@ -16,13 +16,13 @@ function App() {
   const handleShare = async (platform: 'twitter' | 'linkedin' | 'facebook') => {
     const text = "Check out CSV Merger - A free, private, browser-based tool for merging CSV files. Your data stays on your device!";
     const url = "https://tools.ca2datavision.ro/csv-merger/";
-    
+
     const shareUrls = {
       twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
       linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`
     };
-    
+
     window.open(shareUrls[platform], '_blank', 'width=600,height=400');
   };
 
@@ -106,7 +106,7 @@ function App() {
         {/* Header */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <FileText className="w-12 h-12 text-blue-600" />
+            <FileText className="w-12 h-12 text-blue-600"/>
             <h1 className="text-4xl font-bold text-gray-900">CSV Merge</h1>
           </div>
           <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 max-w-2xl mx-auto mb-6">
@@ -119,54 +119,6 @@ function App() {
               preserves all your data.
             </p>
           </div>
-          <div className="max-w-2xl mx-auto bg-gray-50 rounded-lg p-4 mb-8">
-            <div className="flex items-center justify-center gap-4">
-              <button
-                onClick={() => handleShare('twitter')}
-                className="text-blue-500 hover:text-blue-600 transition-colors"
-                title="Share on Twitter"
-                data-testid="share-twitter"
-              >
-                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                </svg>
-              </button>
-              <button
-                onClick={() => handleShare('linkedin')}
-                className="text-blue-700 hover:text-blue-800 transition-colors"
-                title="Share on LinkedIn"
-                data-testid="share-linkedin"
-              >
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                </svg>
-              </button>
-              <button
-                onClick={() => handleShare('facebook')}
-                className="text-blue-600 hover:text-blue-700 transition-colors"
-                title="Share on Facebook"
-                data-testid="share-facebook"
-              >
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                </svg>
-              </button>
-              <button
-                onClick={copyLink}
-                className="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition-colors"
-                title="Copy link"
-                data-testid="copy-link"
-              >
-                {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
-              </button>
-            </div>
-            <div className="mt-4 bg-blue-50 border border-blue-100 rounded-lg p-3">
-              <p className="text-blue-800 flex items-center justify-center gap-2">
-                <Share2 className="w-4 h-4" />
-                Share this tool with others - Note: Only the website link is shared, your files stay private!
-              </p>
-            </div>
-          </div>
         </div>
 
         {/* Drop Zone */}
@@ -175,7 +127,7 @@ function App() {
           onDrop={handleDrop}
           className="border-2 border-dashed border-gray-300 rounded-lg p-8 mb-8 text-center hover:border-blue-500 transition-colors"
         >
-          <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+          <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4"/>
           <p className="text-lg text-gray-600 mb-4">
             Drag & drop your CSV files here, or
           </p>
@@ -207,8 +159,9 @@ function App() {
               onOpenPreview={handleOpenPreview}
             />
             <div className="mt-4 text-center">
-              <label className="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors">
-                <Upload className="w-4 h-4" />
+              <label
+                className="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors">
+                <Upload className="w-4 h-4"/>
                 Add More Files
                 <input
                   type="file"
@@ -233,7 +186,7 @@ function App() {
                         className="absolute top-2 right-2 p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                         title="Open Full Preview"
                       >
-                        <Maximize2 className="w-5 h-5" />
+                        <Maximize2 className="w-5 h-5"/>
                       </button>
                       <div className="text-xs text-gray-600 font-mono bg-gray-50 p-2 rounded overflow-x-auto whitespace-pre">
                         {mergedPreview}
@@ -251,8 +204,10 @@ function App() {
                 </div>
               )}
             </div>
+
           </div>
         )}
+
 
         {/* Footer */}
         <footer className="mt-12 text-center">
@@ -271,9 +226,60 @@ function App() {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors mb-6"
           >
-            <Github className="w-4 h-4" />
+            <Github className="w-4 h-4"/>
             View on GitHub
           </a>
+          <div className="mt-8 bg-gray-50 rounded-lg p-4">
+            <div className="flex items-center justify-center gap-4 mb-4">
+              <button
+                onClick={() => handleShare('twitter')}
+                className="text-blue-500 hover:text-blue-600 transition-colors"
+                title="Share on Twitter"
+                data-testid="share-twitter"
+              >
+                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+              </button>
+              <button
+                onClick={() => handleShare('linkedin')}
+                className="text-blue-700 hover:text-blue-800 transition-colors"
+                title="Share on LinkedIn"
+                data-testid="share-linkedin"
+              >
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
+              </button>
+              <button
+                onClick={() => handleShare('facebook')}
+                className="text-blue-600 hover:text-blue-700 transition-colors"
+                title="Share on Facebook"
+                data-testid="share-facebook"
+              >
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+              </button>
+              <button
+                onClick={copyLink}
+                className="inline-flex items-center gap-1 text-gray-600 hover:text-blue-600 transition-colors"
+                title="Copy link"
+                data-testid="copy-link"
+              >
+                {copied ? <Check className="w-5 h-5"/> : <Copy className="w-5 h-5"/>}
+              </button>
+            </div>
+            <div className="bg-blue-50 border border-blue-100 rounded-lg p-3">
+              <p className="text-blue-800 flex items-center justify-center gap-2">
+                <Share2 className="w-4 h-4"/>
+                Share this tool with others - Note: Only the website link is shared, your files stay private!
+              </p>
+            </div>
+          </div>
           <div className="max-w-2xl mx-auto">
             <div className="bg-gray-50 rounded-lg p-4 mb-4">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Contact Us</h3>
