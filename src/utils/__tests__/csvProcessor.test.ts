@@ -55,6 +55,23 @@ describe('csvProcessor', () => {
       expect(lines[1]).toContain('John');
       expect(lines[2]).toContain('Jane');
     });
+
+    it('ignores empty columns', async () => {
+      const file = new File(['name,age,empty\nJohn,30,\nJane,25,'], 'test.csv', { type: 'text/csv' });
+      const result = await processCSVFiles([file]);
+      const lines = result.split('\n');
+      expect(lines[0].split(',').sort()).toEqual(['name', 'age'].sort());
+      expect(lines[1]).not.toContain('empty');
+    });
+
+    it('ignores columns that are all empty', async () => {
+      const file = new File(['name,empty1,age,empty2\nJohn,,30,\nJane,,25,'], 'test.csv', { type: 'text/csv' });
+      const result = await processCSVFiles([file]);
+      const lines = result.split('\n');
+      expect(lines[0].split(',').sort()).toEqual(['name', 'age'].sort());
+      expect(lines[1]).not.toContain('empty1');
+      expect(lines[1]).not.toContain('empty2');
+    });
   });
 
   describe('previewCSV', () => {
@@ -89,6 +106,13 @@ describe('csvProcessor', () => {
       expect(preview.split('\n')).toHaveLength(5); // Headers + 3 rows + "more rows" message
       expect(preview).toContain('more rows');
     });
+
+    it('ignores empty columns in preview', async () => {
+      const file = new File(['name,age,empty\nJohn,30,\nJane,25,'], 'test.csv', { type: 'text/csv' });
+      const preview = await previewCSV(file);
+      expect(preview).toContain('Headers: name | age');
+      expect(preview).not.toContain('empty');
+    });
   });
 
   describe('previewMergedCSV', () => {
@@ -120,6 +144,13 @@ describe('csvProcessor', () => {
 
       expect(preview).toContain('more rows');
       expect(preview.split('\r').length).toBeLessThan(17); // 15 rows + headers + "more rows" message
+    });
+
+    it('ignores empty columns in merged preview', async () => {
+      const content = 'name,age,empty\nJohn,30,\nJane,25,';
+      const preview = await previewMergedCSV(content);
+      expect(preview).toContain('Headers: name | age');
+      expect(preview).not.toContain('empty');
     });
   });
 });
