@@ -201,11 +201,34 @@ function App() {
             href="https://github.com/ca2datavision/ca2-csv-merger"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors"
+            className="inline-flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors mb-6"
           >
             <Github className="w-4 h-4" />
             View on GitHub
           </a>
+          <div className="max-w-2xl mx-auto">
+            <div className="bg-gray-50 rounded-lg p-4 mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Contact Us</h3>
+              <p className="text-gray-600">
+                For inquiries or support, please email us at{' '}
+                <a
+                  href="mailto:ionut@ca2datavision.ro"
+                  className="text-blue-600 hover:text-blue-800 transition-colors"
+                >
+                  ionut@ca2datavision.ro
+                </a>
+              </p>
+            </div>
+            <div className="text-sm text-gray-500 bg-gray-50 rounded-lg p-4">
+              <h4 className="font-medium mb-2">Disclaimer</h4>
+              <p>
+                This software is provided "as is", without warranty of any kind, express or implied.
+                The creators and contributors of CSV Merge assume no responsibility or liability
+                for any errors or issues that may arise from the use of this software.
+                Users are solely responsible for validating and verifying all outputs and results.
+              </p>
+            </div>
+          </div>
         </footer>
       </div>
       {isPreviewOpen && mergedData && (

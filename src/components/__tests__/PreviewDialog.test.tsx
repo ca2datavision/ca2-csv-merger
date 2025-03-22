@@ -2,6 +2,12 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { PreviewDialog } from '../PreviewDialog';
 import { vi } from 'vitest';
 
+const generateLargeCSV = () => {
+  const headers = 'header1,header2';
+  const rows = Array.from({ length: 100 }, (_, i) => `value${i},value${i}`);
+  return [headers, ...rows].join('\n');
+};
+
 describe('PreviewDialog', () => {
   const mockCsvContent = 'header1,header2\nvalue1,value2\nvalue3,value4';
   const mockProps = {
@@ -43,5 +49,56 @@ describe('PreviewDialog', () => {
     fireEvent.click(closeButton);
 
     expect(mockProps.onClose).toHaveBeenCalled();
+  });
+  it('handles pagination with large datasets', async () => {
+    const largeCsvContent = generateLargeCSV();
+    const { getByTestId } = render(
+      <PreviewDialog
+        csvContent={largeCsvContent}
+        fileName="large.csv"
+        onClose={() => {}}
+      />
+    );
+
+    const nextButton = getByTestId('Next');
+    const prevButton = getByTestId('Previous');
+
+    // Initially, Previous should be disabled and Next enabled
+    expect(prevButton).toBeDisabled();
+    expect(nextButton).not.toBeDisabled();
+
+    // Click Next and verify Previous becomes enabled
+    fireEvent.click(nextButton);
+    expect(prevButton).not.toBeDisabled();
+
+    // Go back using Previous
+    fireEvent.click(prevButton);
+    expect(prevButton).toBeDisabled();
+    expect(nextButton).not.toBeDisabled();
+  });
+
+  it('shows correct page information when navigating', async () => {
+    const largeCsvContent = generateLargeCSV();
+    render(
+      <PreviewDialog
+        csvContent={largeCsvContent}
+        fileName="large.csv"
+        onClose={() => {}}
+      />
+    );
+
+    // Check initial page
+    expect(screen.getByText('Page 1 of 2')).toBeInTheDocument();
+    expect(screen.getByText('Showing rows 1-50 of 100')).toBeInTheDocument();
+
+    // Go to next page
+    fireEvent.click(screen.getByTestId('Next'));
+    expect(screen.getByText('Page 2 of 2')).toBeInTheDocument();
+    expect(screen.getByText('Showing rows 51-100 of 100')).toBeInTheDocument();
+
+    // Go back to first page
+    fireEvent.click(screen.getByTestId('Previous'));
+    expect(screen.getByText('Page 1 of 2')).toBeInTheDocument();
+    expect(screen.getByText('Showing rows 1-50 of 100')).toBeInTheDocument();
   });
 });

@@ -55,7 +55,7 @@ describe('App', () => {
       expect(screen.queryByText('test.csv')).not.toBeInTheDocument();
     });
   });
-
+ 
   it('shows preview dialog when preview button is clicked', async () => {
     const { getByTestId } = render(<App />);
 
