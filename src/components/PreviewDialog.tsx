@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
+import Papa from 'papaparse';
 
 interface PreviewDialogProps {
   csvContent: string;
@@ -31,9 +32,9 @@ export const PreviewDialog: React.FC<PreviewDialogProps> = ({ csvContent, fileNa
     return null;
   }
 
-  const lines = content.split('\n').filter(line => line.trim());
-  const headers = lines[0].split(',').map(h => h.trim());
-  const data = lines.slice(1).map(line => line.split(',').map(cell => cell.trim()));
+  const result = Papa.parse(content, { header: true });
+  const headers = result.meta.fields || [];
+  const data = result.data;
 
   const totalPages = Math.ceil(data.length / rowsPerPage);
   const startIndex = (currentPage - 1) * rowsPerPage;
@@ -72,9 +73,9 @@ export const PreviewDialog: React.FC<PreviewDialogProps> = ({ csvContent, fileNa
                   <td className="border px-4 py-2 text-gray-500 text-sm font-mono">
                     {startIndex + i + 1}
                   </td>
-                  {row.map((cell, j) => (
+                  {headers.map((header, j) => (
                     <td key={j} className="border px-4 py-2">
-                      {cell}
+                      {(row as Record<string, string>)[header]}
                     </td>
                   ))}
                 </tr>

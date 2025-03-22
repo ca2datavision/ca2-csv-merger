@@ -1,93 +1,68 @@
+import Papa from 'papaparse';
+
 export const processCSVFiles = async (files: File[]): Promise<string> => {
-  const headers = new Set<string>();
   const allData: Record<string, string>[] = [];
+  const headers = new Set<string>();
 
-  // First pass: collect all unique headers
+  // First pass: collect all unique headers and data
   for (const file of files) {
     const content = await readFileContent(file);
-    const lines = content.split('\n').filter(line => line.trim());
-    if (lines.length === 0) continue;
-
-    const fileHeaders = lines[0].split(',').map(h => h.trim());
-    fileHeaders.forEach(header => headers.add(header));
-  }
-
-  // Second pass: process all data
-  for (const file of files) {
-    const content = await readFileContent(file);
-    const lines = content.split('\n').filter(line => line.trim());
-    if (lines.length <= 1) continue;
-
-    const fileHeaders = lines[0].split(',').map(h => h.trim());
+    const result = Papa.parse(content, { header: true });
     
-    // Process each data row
-    for (let i = 1; i < lines.length; i++) {
-      if (!lines[i].trim()) continue;
-      
-      const values = lines[i].split(',').map(v => v.trim());
-      const row: Record<string, string> = {};
-      
-      // Initialize all headers with empty strings
-      Array.from(headers).forEach(header => {
-        row[header] = '';
-      });
-      
-      // Fill in available values
-      fileHeaders.forEach((header, index) => {
-        if (values[index]) {
-          row[header] = values[index];
-        }
-      });
-      
-      allData.push(row);
+    if (result.meta.fields) {
+      result.meta.fields.forEach(header => headers.add(header));
     }
+    
+    allData.push(...(result.data as Record<string, string>[]));
   }
 
-  // Convert to CSV string
+  // Convert back to CSV
   const headerArray = Array.from(headers);
-  const csvContent = [
-    headerArray.join(','),
-    ...allData.map(row => headerArray.map(header => row[header]).join(','))
-  ].join('\n');
-
-  return csvContent;
+  return Papa.unparse({
+    fields: headerArray,
+    data: allData
+  });
 };
 
 export const previewCSV = async (file: File): Promise<string> => {
   const content = await readFileContent(file);
-  const lines = content.split('\n').filter(line => line.trim());
-  if (!lines.length) return 'Empty CSV file';
-
-  // Get headers
-  const headers = lines[0].split(',').map(h => h.trim());
+  const result = Papa.parse(content, { header: true });
   
-  // Format preview with aligned columns
-  const maxPreviewRows = Math.min(3, lines.length);
-  const previewLines = lines.slice(0, maxPreviewRows).map((line, index) => {
-    const cells = line.split(',').map(cell => cell.trim());
-    if (index === 0) {
-      return `Headers: ${cells.slice(0, 3).join(' | ')}${cells.length > 3 ? ' | ...' : ''}`;
-    }
-    return `Row ${index}: ${cells.slice(0, 3).join(' | ')}${cells.length > 3 ? ' | ...' : ''}`;
-  });
+  if (!result.data.length) return 'Empty CSV file';
 
-  return previewLines.join('\n') + (lines.length > maxPreviewRows ? `\n... and ${lines.length - maxPreviewRows} more rows` : '');
+  const headers = result.meta.fields || [];
+  const maxPreviewRows = Math.min(3, result.data.length);
+  const previewLines = [
+    `Headers: ${headers.slice(0, 3).join(' | ')}${headers.length > 3 ? ' | ...' : ''}`,
+    ...result.data.slice(0, maxPreviewRows).map((row, index) => {
+      const values = headers.map(header => (row as Record<string, string>)[header]);
+      return `Row ${index + 1}: ${values.slice(0, 3).join(' | ')}${values.length > 3 ? ' | ...' : ''}`;
+    })
+  ];
+
+  return previewLines.join('\n') + 
+    (result.data.length > maxPreviewRows ? 
+      `\n... and ${result.data.length - maxPreviewRows} more rows` : '');
 };
 
 export const previewMergedCSV = async (csvContent: string): Promise<string> => {
-  const lines = csvContent.split('\n').filter(line => line.trim());
-  if (!lines.length) return 'No data available';
+  const result = Papa.parse(csvContent, { header: true });
+  
+  if (!result.data.length) return 'No data available';
 
-  const maxPreviewRows = Math.min(15, lines.length);
-  const previewLines = lines.slice(0, maxPreviewRows).map((line, index) => {
-    const cells = line.split(',').map(cell => cell.trim());
-    if (index === 0) {
-      return `Headers: ${cells.slice(0, 3).join(' | ')}${cells.length > 3 ? ' | ...' : ''}`;
-    }
-    return `Row ${index}: ${cells.slice(0, 3).join(' | ')}${cells.length > 3 ? ' | ...' : ''}`;
-  });
+  const headers = result.meta.fields || [];
+  const maxPreviewRows = Math.min(15, result.data.length);
+  const previewLines = [
+    `Headers: ${headers.slice(0, 3).join(' | ')}${headers.length > 3 ? ' | ...' : ''}`,
+    ...result.data.slice(0, maxPreviewRows).map((row, index) => {
+      const values = headers.map(header => (row as Record<string, string>)[header]);
+      return `Row ${index + 1}: ${values.slice(0, 3).join(' | ')}${values.length > 3 ? ' | ...' : ''}`;
+    })
+  ];
 
-  return previewLines.join('\n') + (lines.length > maxPreviewRows ? `\n... and ${lines.length - maxPreviewRows} more rows` : '');
+  return previewLines.join('\n') + 
+    (result.data.length > maxPreviewRows ? 
+      `\n... and ${result.data.length - maxPreviewRows} more rows` : '');
 };
 
 const readFileContent = (file: File): Promise<string> => {

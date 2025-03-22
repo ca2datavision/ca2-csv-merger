@@ -1,12 +1,15 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
 import App from '../App';
+import userEvent from '@testing-library/user-event';
 
 // Mock the CSV processing utilities
 vi.mock('../utils/csvProcessor', () => ({
   processCSVFiles: vi.fn().mockResolvedValue('name,age\nJohn,30'),
   previewCSV: vi.fn().mockResolvedValue('Headers: name | age\nRow 1: John | 30'),
-  previewMergedCSV: vi.fn().mockResolvedValue('Headers: name | age\nRow 1: John | 30'),
+  previewMergedCSV: vi.fn().mockResolvedValue('Headers: name | age\nRow 1: John | 30\nRow 2: Jane | 25'),
+  detectDelimiter: vi.fn().mockReturnValue(','),
+  parseCSVLine: vi.fn().mockImplementation(line => line.split(',')),
 }));
 
 describe('App', () => {
@@ -18,6 +21,29 @@ describe('App', () => {
     render(<App />);
     expect(screen.getByText('CSV Merge')).toBeInTheDocument();
     expect(screen.getByText(/100% Private/)).toBeInTheDocument();
+  });
+
+  it('handles start over functionality', async () => {
+    render(<App />);
+    
+    const file = new File(['name,age\nJohn,30'], 'test.csv', { type: 'text/csv' });
+    const input = screen.getByLabelText('Select Files');
+    
+    Object.defineProperty(input, 'files', {
+      value: [file],
+    });
+    
+    fireEvent.change(input);
+    
+    await waitFor(() => {
+      expect(screen.getByText('test.csv')).toBeInTheDocument();
+    });
+    
+    const startOverButton = screen.getByText('Start Over');
+    fireEvent.click(startOverButton);
+    
+    expect(screen.queryByText('test.csv')).not.toBeInTheDocument();
+    expect(screen.queryByText('Preview of Merged Result')).not.toBeInTheDocument();
   });
 
   it('handles file selection', async () => {
@@ -69,11 +95,12 @@ describe('App', () => {
     fireEvent.change(input);
 
     await waitFor(async () => {
-      const previewButton = await screen.findByTitle('Open Full Preview');
+      const previewButton = screen.getByTestId('open-output-preview');
       fireEvent.click(previewButton);
       await waitFor(async () => {
-        let previewTitle = getByTestId('preview-dialog-title')
+        const previewTitle = getByTestId('preview-dialog-title');
         expect(previewTitle).toBeInTheDocument();
+        expect(previewTitle).toHaveTextContent('CSV Preview: Merged Result');
       });
     });
   });
@@ -115,7 +142,7 @@ describe('App', () => {
     fireEvent.change(input);
 
     await waitFor(async () => {
-      const downloadButton = await screen.findByText('Download Merged CSV');
+      const downloadButton = screen.getByText('Download Merged CSV');
       fireEvent.click(downloadButton);
       expect(mockCreateObjectURL).toHaveBeenCalled();
       expect(mockRevokeObjectURL).toHaveBeenCalled();

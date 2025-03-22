@@ -3,13 +3,13 @@ import { PreviewDialog } from '../PreviewDialog';
 import { vi } from 'vitest';
 
 const generateLargeCSV = () => {
-  const headers = 'header1,header2';
-  const rows = Array.from({ length: 100 }, (_, i) => `value${i},value${i}`);
+  const headers = '"Complex, Header 1","Header, 2"';
+  const rows = Array.from({ length: 100 }, (_, i) => `"value ${i}, with comma",value${i}`);
   return [headers, ...rows].join('\n');
 };
 
 describe('PreviewDialog', () => {
-  const mockCsvContent = 'header1,header2\nvalue1,value2\nvalue3,value4';
+  const mockCsvContent = '"header 1, complex","header 2"\n"value 1, with comma","value 2"\n"value 3, more","value 4"';
   const mockProps = {
     csvContent: mockCsvContent,
     fileName: 'test.csv',
@@ -23,9 +23,16 @@ describe('PreviewDialog', () => {
   it('renders dialog with correct title and content', () => {
     render(<PreviewDialog {...mockProps} />);
 
-    expect(screen.getByText('CSV Preview: test.csv')).toBeInTheDocument();
+    const title = screen.getByTestId('preview-dialog-title');
+    expect(title).toHaveTextContent('CSV Preview: test.csv');
+    expect(screen.getByText('header 1, complex')).toBeInTheDocument();
+    expect(screen.getByText('value 1, with comma')).toBeInTheDocument();
+  });
+
+  it('handles semicolon-delimited content', () => {
+    const semicolonContent = 'header1;header2\nvalue1;value2';
+    render(<PreviewDialog {...mockProps} csvContent={semicolonContent} />);
     expect(screen.getByText('header1')).toBeInTheDocument();
-    expect(screen.getByText('header2')).toBeInTheDocument();
     expect(screen.getByText('value1')).toBeInTheDocument();
   });
 
